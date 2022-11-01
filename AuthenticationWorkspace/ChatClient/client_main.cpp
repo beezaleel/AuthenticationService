@@ -17,6 +17,9 @@ std::string name = "";
 
 
 void SetConsoleColor(int);
+void AuthenticateUser();
+void RegisterUser(std::string, std::string);
+void ValidateUser(std::string, std::string);
 
 /// <summary>
 /// Process user input
@@ -129,6 +132,39 @@ void SetConsoleColor(int color) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
+
+void AuthenticateUser() {
+	int option;
+	std::string email, password;
+
+	printf("Please select from the options below: \n");
+	printf("1. Register \n");
+	printf("2. Login \n");
+	printf("-->");
+	std::cin >> option;
+
+	switch (option)
+	{
+	case 1:
+		RegisterUser(email, password);
+		break;
+	case 2:
+		ValidateUser(email, password);
+		break;
+	default:
+		printf("Invalid option selected. Goodbye \n");
+		break;
+	}
+}
+
+void RegisterUser(std::string email, std::string password) {
+
+}
+
+void ValidateUser(std::string email, std::string password) {
+
+}
+
 int main(int argc, char* argv) {
 	printf("##################################################################\n");
 	printf("#                       DEMO CHAT                                #\n");
@@ -138,6 +174,9 @@ int main(int argc, char* argv) {
 	printf("#               Groups: general, staff, students (case sensitive)#\n");
 	printf("##################################################################\n");
 
+	// Authenticate users before they login
+	AuthenticateUser();
+	
 	const int recvBufLen = 128;
 	char recvBuf[recvBufLen];
 
