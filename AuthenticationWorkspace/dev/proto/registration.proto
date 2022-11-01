@@ -1,18 +1,19 @@
+syntax = "proto2";
 package authenticate;
 
 message CreateAccountWeb {
-    required long requestId = 1;
+    required int32 requestId = 1;
     required string email = 2;
     required string plaintextPassword = 3;
 }
 
 message CreateAccountWebSuccess {
-    required long requestId = 1;
-    required long userId = 2;
+    required int32 requestId = 1;
+    required int32 userId = 2;
 }
 
 message CreateAccountWebFailure {
-    required long requestId = 1;
+    required int32 requestId = 1;
     enum reason {
     ACCOUNT_ALREADY_EXISTS = 0;
     INVALID_PASSWORD = 1;

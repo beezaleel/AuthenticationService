@@ -1,19 +1,20 @@
+syntax = "proto2";
 package authenticate;
 
 message AuthenticateWeb {
-    required long requestId = 1;
+    required int32 requestId = 1;
     required string email = 2;
     required string plaintextPassword = 3;
 }
 
 message AuthenticateWebSuccess {
-    required long requestId = 1;
-    required long userId = 2;
+    required int32 requestId = 1;
+    required int32 userId = 2;
     required string creationDate = 3;
 }
 
 message AuthenticateWebFailure {
-    required long requestId = 1;
+    required int32 requestId = 1;
     enum reason {
     INVALID_CREDENTIALS = 0;
     INTERNAL_SERVER_ERROR = 1;
