@@ -18,8 +18,7 @@ std::string name = "";
 
 void SetConsoleColor(int);
 void AuthenticateUser();
-void RegisterUser(std::string, std::string);
-void ValidateUser(std::string, std::string);
+void RegisterOrLogin(int, std::string, std::string);
 
 /// <summary>
 /// Process user input
@@ -140,16 +139,21 @@ void AuthenticateUser() {
 	printf("Please select from the options below: \n");
 	printf("1. Register \n");
 	printf("2. Login \n");
-	printf("-->");
+	printf("--> ");
 	std::cin >> option;
+
+	printf("Email: --> ");
+	std::cin >> email;
+	printf("Password: --> ");
 
 	switch (option)
 	{
 	case 1:
-		RegisterUser(email, password);
+		std::cin >> password;
+		RegisterOrLogin(option, email, password);
 		break;
 	case 2:
-		ValidateUser(email, password);
+		RegisterOrLogin(option, email, password);
 		break;
 	default:
 		printf("Invalid option selected. Goodbye \n");
@@ -157,11 +161,7 @@ void AuthenticateUser() {
 	}
 }
 
-void RegisterUser(std::string email, std::string password) {
-
-}
-
-void ValidateUser(std::string email, std::string password) {
+void RegisterOrLogin(int type, std::string email, std::string password) {
 
 }
 
