@@ -1,5 +1,5 @@
 syntax = "proto2";
-package authenticate;
+package account;
 
 message CreateAccountWeb {
     required int32 requestId = 1;

@@ -54,7 +54,7 @@ struct TableStruct_registration_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_registration_2eproto;
-namespace authenticate {
+namespace account {
 class CreateAccountWeb;
 struct CreateAccountWebDefaultTypeInternal;
 extern CreateAccountWebDefaultTypeInternal _CreateAccountWeb_default_instance_;
@@ -64,13 +64,13 @@ extern CreateAccountWebFailureDefaultTypeInternal _CreateAccountWebFailure_defau
 class CreateAccountWebSuccess;
 struct CreateAccountWebSuccessDefaultTypeInternal;
 extern CreateAccountWebSuccessDefaultTypeInternal _CreateAccountWebSuccess_default_instance_;
-}  // namespace authenticate
+}  // namespace account
 PROTOBUF_NAMESPACE_OPEN
-template<> ::authenticate::CreateAccountWeb* Arena::CreateMaybeMessage<::authenticate::CreateAccountWeb>(Arena*);
-template<> ::authenticate::CreateAccountWebFailure* Arena::CreateMaybeMessage<::authenticate::CreateAccountWebFailure>(Arena*);
-template<> ::authenticate::CreateAccountWebSuccess* Arena::CreateMaybeMessage<::authenticate::CreateAccountWebSuccess>(Arena*);
+template<> ::account::CreateAccountWeb* Arena::CreateMaybeMessage<::account::CreateAccountWeb>(Arena*);
+template<> ::account::CreateAccountWebFailure* Arena::CreateMaybeMessage<::account::CreateAccountWebFailure>(Arena*);
+template<> ::account::CreateAccountWebSuccess* Arena::CreateMaybeMessage<::account::CreateAccountWebSuccess>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace authenticate {
+namespace account {
 
 enum CreateAccountWebFailure_reason : int {
   CreateAccountWebFailure_reason_ACCOUNT_ALREADY_EXISTS = 0,
@@ -99,7 +99,7 @@ inline bool CreateAccountWebFailure_reason_Parse(
 // ===================================================================
 
 class CreateAccountWeb final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:authenticate.CreateAccountWeb) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:account.CreateAccountWeb) */ {
  public:
   inline CreateAccountWeb() : CreateAccountWeb(nullptr) {}
   ~CreateAccountWeb() override;
@@ -204,7 +204,7 @@ class CreateAccountWeb final :
   void InternalSwap(CreateAccountWeb* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "authenticate.CreateAccountWeb";
+    return "account.CreateAccountWeb";
   }
   protected:
   explicit CreateAccountWeb(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -277,7 +277,7 @@ class CreateAccountWeb final :
   void _internal_set_requestid(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:authenticate.CreateAccountWeb)
+  // @@protoc_insertion_point(class_scope:account.CreateAccountWeb)
  private:
   class _Internal;
 
@@ -297,7 +297,7 @@ class CreateAccountWeb final :
 // -------------------------------------------------------------------
 
 class CreateAccountWebSuccess final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:authenticate.CreateAccountWebSuccess) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:account.CreateAccountWebSuccess) */ {
  public:
   inline CreateAccountWebSuccess() : CreateAccountWebSuccess(nullptr) {}
   ~CreateAccountWebSuccess() override;
@@ -402,7 +402,7 @@ class CreateAccountWebSuccess final :
   void InternalSwap(CreateAccountWebSuccess* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "authenticate.CreateAccountWebSuccess";
+    return "account.CreateAccountWebSuccess";
   }
   protected:
   explicit CreateAccountWebSuccess(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -451,7 +451,7 @@ class CreateAccountWebSuccess final :
   void _internal_set_userid(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:authenticate.CreateAccountWebSuccess)
+  // @@protoc_insertion_point(class_scope:account.CreateAccountWebSuccess)
  private:
   class _Internal;
 
@@ -470,7 +470,7 @@ class CreateAccountWebSuccess final :
 // -------------------------------------------------------------------
 
 class CreateAccountWebFailure final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:authenticate.CreateAccountWebFailure) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:account.CreateAccountWebFailure) */ {
  public:
   inline CreateAccountWebFailure() : CreateAccountWebFailure(nullptr) {}
   ~CreateAccountWebFailure() override;
@@ -575,7 +575,7 @@ class CreateAccountWebFailure final :
   void InternalSwap(CreateAccountWebFailure* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "authenticate.CreateAccountWebFailure";
+    return "account.CreateAccountWebFailure";
   }
   protected:
   explicit CreateAccountWebFailure(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -643,20 +643,20 @@ class CreateAccountWebFailure final :
   void _internal_set_requestid(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // required .authenticate.CreateAccountWebFailure.reason failureReason = 2;
+  // required .account.CreateAccountWebFailure.reason failureReason = 2;
   bool has_failurereason() const;
   private:
   bool _internal_has_failurereason() const;
   public:
   void clear_failurereason();
-  ::authenticate::CreateAccountWebFailure_reason failurereason() const;
-  void set_failurereason(::authenticate::CreateAccountWebFailure_reason value);
+  ::account::CreateAccountWebFailure_reason failurereason() const;
+  void set_failurereason(::account::CreateAccountWebFailure_reason value);
   private:
-  ::authenticate::CreateAccountWebFailure_reason _internal_failurereason() const;
-  void _internal_set_failurereason(::authenticate::CreateAccountWebFailure_reason value);
+  ::account::CreateAccountWebFailure_reason _internal_failurereason() const;
+  void _internal_set_failurereason(::account::CreateAccountWebFailure_reason value);
   public:
 
-  // @@protoc_insertion_point(class_scope:authenticate.CreateAccountWebFailure)
+  // @@protoc_insertion_point(class_scope:account.CreateAccountWebFailure)
  private:
   class _Internal;
 
@@ -699,7 +699,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 CreateAccountWeb::_internal_requestid() co
   return requestid_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 CreateAccountWeb::requestid() const {
-  // @@protoc_insertion_point(field_get:authenticate.CreateAccountWeb.requestId)
+  // @@protoc_insertion_point(field_get:account.CreateAccountWeb.requestId)
   return _internal_requestid();
 }
 inline void CreateAccountWeb::_internal_set_requestid(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -708,7 +708,7 @@ inline void CreateAccountWeb::_internal_set_requestid(::PROTOBUF_NAMESPACE_ID::i
 }
 inline void CreateAccountWeb::set_requestid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_requestid(value);
-  // @@protoc_insertion_point(field_set:authenticate.CreateAccountWeb.requestId)
+  // @@protoc_insertion_point(field_set:account.CreateAccountWeb.requestId)
 }
 
 // required string email = 2;
@@ -724,7 +724,7 @@ inline void CreateAccountWeb::clear_email() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& CreateAccountWeb::email() const {
-  // @@protoc_insertion_point(field_get:authenticate.CreateAccountWeb.email)
+  // @@protoc_insertion_point(field_get:account.CreateAccountWeb.email)
   return _internal_email();
 }
 template <typename ArgT0, typename... ArgT>
@@ -732,11 +732,11 @@ inline PROTOBUF_ALWAYS_INLINE
 void CreateAccountWeb::set_email(ArgT0&& arg0, ArgT... args) {
  _has_bits_[0] |= 0x00000001u;
  email_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:authenticate.CreateAccountWeb.email)
+  // @@protoc_insertion_point(field_set:account.CreateAccountWeb.email)
 }
 inline std::string* CreateAccountWeb::mutable_email() {
   std::string* _s = _internal_mutable_email();
-  // @@protoc_insertion_point(field_mutable:authenticate.CreateAccountWeb.email)
+  // @@protoc_insertion_point(field_mutable:account.CreateAccountWeb.email)
   return _s;
 }
 inline const std::string& CreateAccountWeb::_internal_email() const {
@@ -751,7 +751,7 @@ inline std::string* CreateAccountWeb::_internal_mutable_email() {
   return email_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
 inline std::string* CreateAccountWeb::release_email() {
-  // @@protoc_insertion_point(field_release:authenticate.CreateAccountWeb.email)
+  // @@protoc_insertion_point(field_release:account.CreateAccountWeb.email)
   if (!_internal_has_email()) {
     return nullptr;
   }
@@ -766,7 +766,7 @@ inline void CreateAccountWeb::set_allocated_email(std::string* email) {
   }
   email_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), email,
       GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:authenticate.CreateAccountWeb.email)
+  // @@protoc_insertion_point(field_set_allocated:account.CreateAccountWeb.email)
 }
 
 // required string plaintextPassword = 3;
@@ -782,7 +782,7 @@ inline void CreateAccountWeb::clear_plaintextpassword() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline const std::string& CreateAccountWeb::plaintextpassword() const {
-  // @@protoc_insertion_point(field_get:authenticate.CreateAccountWeb.plaintextPassword)
+  // @@protoc_insertion_point(field_get:account.CreateAccountWeb.plaintextPassword)
   return _internal_plaintextpassword();
 }
 template <typename ArgT0, typename... ArgT>
@@ -790,11 +790,11 @@ inline PROTOBUF_ALWAYS_INLINE
 void CreateAccountWeb::set_plaintextpassword(ArgT0&& arg0, ArgT... args) {
  _has_bits_[0] |= 0x00000002u;
  plaintextpassword_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:authenticate.CreateAccountWeb.plaintextPassword)
+  // @@protoc_insertion_point(field_set:account.CreateAccountWeb.plaintextPassword)
 }
 inline std::string* CreateAccountWeb::mutable_plaintextpassword() {
   std::string* _s = _internal_mutable_plaintextpassword();
-  // @@protoc_insertion_point(field_mutable:authenticate.CreateAccountWeb.plaintextPassword)
+  // @@protoc_insertion_point(field_mutable:account.CreateAccountWeb.plaintextPassword)
   return _s;
 }
 inline const std::string& CreateAccountWeb::_internal_plaintextpassword() const {
@@ -809,7 +809,7 @@ inline std::string* CreateAccountWeb::_internal_mutable_plaintextpassword() {
   return plaintextpassword_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
 inline std::string* CreateAccountWeb::release_plaintextpassword() {
-  // @@protoc_insertion_point(field_release:authenticate.CreateAccountWeb.plaintextPassword)
+  // @@protoc_insertion_point(field_release:account.CreateAccountWeb.plaintextPassword)
   if (!_internal_has_plaintextpassword()) {
     return nullptr;
   }
@@ -824,7 +824,7 @@ inline void CreateAccountWeb::set_allocated_plaintextpassword(std::string* plain
   }
   plaintextpassword_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), plaintextpassword,
       GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set_allocated:authenticate.CreateAccountWeb.plaintextPassword)
+  // @@protoc_insertion_point(field_set_allocated:account.CreateAccountWeb.plaintextPassword)
 }
 
 // -------------------------------------------------------------------
@@ -847,7 +847,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 CreateAccountWebSuccess::_internal_request
   return requestid_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 CreateAccountWebSuccess::requestid() const {
-  // @@protoc_insertion_point(field_get:authenticate.CreateAccountWebSuccess.requestId)
+  // @@protoc_insertion_point(field_get:account.CreateAccountWebSuccess.requestId)
   return _internal_requestid();
 }
 inline void CreateAccountWebSuccess::_internal_set_requestid(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -856,7 +856,7 @@ inline void CreateAccountWebSuccess::_internal_set_requestid(::PROTOBUF_NAMESPAC
 }
 inline void CreateAccountWebSuccess::set_requestid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_requestid(value);
-  // @@protoc_insertion_point(field_set:authenticate.CreateAccountWebSuccess.requestId)
+  // @@protoc_insertion_point(field_set:account.CreateAccountWebSuccess.requestId)
 }
 
 // required int32 userId = 2;
@@ -875,7 +875,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 CreateAccountWebSuccess::_internal_userid(
   return userid_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 CreateAccountWebSuccess::userid() const {
-  // @@protoc_insertion_point(field_get:authenticate.CreateAccountWebSuccess.userId)
+  // @@protoc_insertion_point(field_get:account.CreateAccountWebSuccess.userId)
   return _internal_userid();
 }
 inline void CreateAccountWebSuccess::_internal_set_userid(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -884,7 +884,7 @@ inline void CreateAccountWebSuccess::_internal_set_userid(::PROTOBUF_NAMESPACE_I
 }
 inline void CreateAccountWebSuccess::set_userid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_userid(value);
-  // @@protoc_insertion_point(field_set:authenticate.CreateAccountWebSuccess.userId)
+  // @@protoc_insertion_point(field_set:account.CreateAccountWebSuccess.userId)
 }
 
 // -------------------------------------------------------------------
@@ -907,7 +907,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 CreateAccountWebFailure::_internal_request
   return requestid_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 CreateAccountWebFailure::requestid() const {
-  // @@protoc_insertion_point(field_get:authenticate.CreateAccountWebFailure.requestId)
+  // @@protoc_insertion_point(field_get:account.CreateAccountWebFailure.requestId)
   return _internal_requestid();
 }
 inline void CreateAccountWebFailure::_internal_set_requestid(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -916,10 +916,10 @@ inline void CreateAccountWebFailure::_internal_set_requestid(::PROTOBUF_NAMESPAC
 }
 inline void CreateAccountWebFailure::set_requestid(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_requestid(value);
-  // @@protoc_insertion_point(field_set:authenticate.CreateAccountWebFailure.requestId)
+  // @@protoc_insertion_point(field_set:account.CreateAccountWebFailure.requestId)
 }
 
-// required .authenticate.CreateAccountWebFailure.reason failureReason = 2;
+// required .account.CreateAccountWebFailure.reason failureReason = 2;
 inline bool CreateAccountWebFailure::_internal_has_failurereason() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
@@ -931,21 +931,21 @@ inline void CreateAccountWebFailure::clear_failurereason() {
   failurereason_ = 0;
   _has_bits_[0] &= ~0x00000002u;
 }
-inline ::authenticate::CreateAccountWebFailure_reason CreateAccountWebFailure::_internal_failurereason() const {
-  return static_cast< ::authenticate::CreateAccountWebFailure_reason >(failurereason_);
+inline ::account::CreateAccountWebFailure_reason CreateAccountWebFailure::_internal_failurereason() const {
+  return static_cast< ::account::CreateAccountWebFailure_reason >(failurereason_);
 }
-inline ::authenticate::CreateAccountWebFailure_reason CreateAccountWebFailure::failurereason() const {
-  // @@protoc_insertion_point(field_get:authenticate.CreateAccountWebFailure.failureReason)
+inline ::account::CreateAccountWebFailure_reason CreateAccountWebFailure::failurereason() const {
+  // @@protoc_insertion_point(field_get:account.CreateAccountWebFailure.failureReason)
   return _internal_failurereason();
 }
-inline void CreateAccountWebFailure::_internal_set_failurereason(::authenticate::CreateAccountWebFailure_reason value) {
-  assert(::authenticate::CreateAccountWebFailure_reason_IsValid(value));
+inline void CreateAccountWebFailure::_internal_set_failurereason(::account::CreateAccountWebFailure_reason value) {
+  assert(::account::CreateAccountWebFailure_reason_IsValid(value));
   _has_bits_[0] |= 0x00000002u;
   failurereason_ = value;
 }
-inline void CreateAccountWebFailure::set_failurereason(::authenticate::CreateAccountWebFailure_reason value) {
+inline void CreateAccountWebFailure::set_failurereason(::account::CreateAccountWebFailure_reason value) {
   _internal_set_failurereason(value);
-  // @@protoc_insertion_point(field_set:authenticate.CreateAccountWebFailure.failureReason)
+  // @@protoc_insertion_point(field_set:account.CreateAccountWebFailure.failureReason)
 }
 
 #ifdef __GNUC__
@@ -958,14 +958,14 @@ inline void CreateAccountWebFailure::set_failurereason(::authenticate::CreateAcc
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace authenticate
+}  // namespace account
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::authenticate::CreateAccountWebFailure_reason> : ::std::true_type {};
+template <> struct is_proto_enum< ::account::CreateAccountWebFailure_reason> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::authenticate::CreateAccountWebFailure_reason>() {
-  return ::authenticate::CreateAccountWebFailure_reason_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::account::CreateAccountWebFailure_reason>() {
+  return ::account::CreateAccountWebFailure_reason_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

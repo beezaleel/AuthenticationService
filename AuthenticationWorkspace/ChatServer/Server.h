@@ -40,7 +40,9 @@ struct ServerInfo
 enum MessageType {
 	Join = 1,
 	Leave = 2,
-	Send = 3
+	Send = 3,
+	Register = 4,
+	Login = 5
 };
 
 class Server
