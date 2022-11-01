@@ -1,0 +1,22 @@
+package authenticate;
+
+message CreateAccountWeb {
+    required long requestId = 1;
+    required string email = 2;
+    required string plaintextPassword = 3;
+}
+
+message CreateAccountWebSuccess {
+    required long requestId = 1;
+    required long userId = 2;
+}
+
+message CreateAccountWebFailure {
+    required long requestId = 1;
+    enum reason {
+    ACCOUNT_ALREADY_EXISTS = 0;
+    INVALID_PASSWORD = 1;
+    INTERNAL_SERVER_ERROR = 2;
+    }
+    required reason failureReason = 2;
+}
