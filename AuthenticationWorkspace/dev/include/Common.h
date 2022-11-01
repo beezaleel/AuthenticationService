@@ -24,3 +24,7 @@ struct JoinRoom : public Header {
 struct LeaveRoom : public Header {
 	std::string roomName;
 };
+
+struct Authentication : public Header {
+	std::string userData;
+};

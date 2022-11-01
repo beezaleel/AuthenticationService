@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <windows.h>
+#include "registration.pb.h"
 
 #define BACKSPACE 8
 #define ENTER 13
@@ -161,8 +162,41 @@ void AuthenticateUser() {
 	}
 }
 
+/// <summary>
+/// Registers or trys to login to the chat application
+/// </summary>
+/// <param name="type">Either Registration or Login</param>
+/// <param name="email">The users email</param>
+/// <param name="password">The password</param>
 void RegisterOrLogin(int type, std::string email, std::string password) {
+	Buffer buf;
 
+	// In MessageType enum, Register = 4 and Login = 5
+	// So we are going to add 3 to type selected.
+	int messageId = type + 3;
+
+	account::CreateAccountWeb user;
+
+	user.set_requestid(0); // Set to 0 temporary, the ChatServer will change this to the socketId
+	user.set_email(email);
+	user.set_plaintextpassword(password);
+
+	std::string serializedUser;
+	serializedUser = user.SerializeToString(&serializedUser);
+
+	Authentication auth;
+	auth.messageId = messageId;
+	auth.userData = serializedUser;
+
+	auth.packetLength = sizeof(Header) + sizeof(auth.userData.size()) + auth.userData.size();
+
+	buf = Buffer();
+	buf.WriteUInt32(auth.packetLength);
+	buf.WriteShort(auth.messageId);
+	buf.WriteUInt32(auth.userData.size());
+	buf.WriteString((char*)auth.userData.c_str());
+
+	client.Send((const char*)(buf.Data.data()), auth.packetLength);
 }
 
 int main(int argc, char* argv) {
