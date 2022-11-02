@@ -176,27 +176,45 @@ void RegisterOrLogin(int type, std::string email, std::string password) {
 	int messageId = type + 3;
 
 	account::CreateAccountWeb user;
-
 	user.set_requestid(0); // Set to 0 temporary, the ChatServer will change this to the socketId
 	user.set_email(email);
 	user.set_plaintextpassword(password);
 
 	std::string serializedUser;
-	serializedUser = user.SerializeToString(&serializedUser);
+	user.SerializeToString(&serializedUser);
 
 	Authentication auth;
 	auth.messageId = messageId;
 	auth.userData = serializedUser;
 
-	auth.packetLength = sizeof(Header) + sizeof(auth.userData.size()) + auth.userData.size();
+	auth.packetLength = sizeof(Header) + sizeof(auth.userData.size()); //+ auth.userData.size();
+	std::cout << "sizeof(Header): " << sizeof(Header) << " sizeof(auth.userData.size()): " << sizeof(auth.userData.size()) << " auth.userData.size(): " << auth.userData.size() <<  std::endl;
+
 
 	buf = Buffer();
 	buf.WriteUInt32(auth.packetLength);
-	buf.WriteShort(auth.messageId);
-	buf.WriteUInt32(auth.userData.size());
-	buf.WriteString((char*)auth.userData.c_str());
+	buf.WriteUInt32(auth.messageId);
+	//buf.WriteUInt32(auth.userData.size());
+	//buf.WriteString((char*)auth.userData.c_str());
+	//buf.Data.assign(auth.userData.begin(), auth.userData.end());
+	buf.Data.insert(buf.Data.end(), auth.userData.begin(), auth.userData.end());
 
 	client.Send((const char*)(buf.Data.data()), auth.packetLength);
+
+	int oLength = buf.ReadUInt32(0);
+	int pId = buf.ReadUInt32(4);
+	//int usedsize = buf.ReadUInt32(8);
+	std::string mesg(buf.Data.begin() + 8, buf.Data.end());
+	std::cout << "oLength: " << oLength << " pId: " << pId << " mesg: " << mesg << " serializedUser: " << serializedUser << std::endl;
+
+	account::CreateAccountWeb deserializeUser;
+	bool success = deserializeUser.ParseFromString(mesg);
+	if (!success) {
+		std::cout << "Failed to parse user" << std::endl;
+	}
+	std::cout << deserializeUser.requestid() << std::endl;
+	std::cout << deserializeUser.email() << std::endl;
+	std::cout << deserializeUser.plaintextpassword() << std::endl;
 }
 
 int main(int argc, char* argv) {
@@ -207,9 +225,6 @@ int main(int argc, char* argv) {
 	printf("#               Enter 'Leave roomname' to Leave room             #\n");
 	printf("#               Groups: general, staff, students (case sensitive)#\n");
 	printf("##################################################################\n");
-
-	// Authenticate users before they login
-	AuthenticateUser();
 	
 	const int recvBufLen = 128;
 	char recvBuf[recvBufLen];
@@ -224,6 +239,9 @@ int main(int argc, char* argv) {
 
 	if (client.ManageSocket() != success)
 		return 1;
+
+	// Authenticate users before they login
+	AuthenticateUser();
 
 	SetConsoleColor(1);
 	printf("\n");

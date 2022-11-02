@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "registration.pb.h"
 #include <algorithm>
 #include <sstream>
 
@@ -193,6 +194,8 @@ int Server::Receive(ClientInfo& client, const int bufLen, char* buf) {
 			char* roomname = client.buffer.ReadString(10);
 			Room room;
 			room.roomName = roomname;
+			account::CreateAccountWeb deserializeUser;
+			std::string serializedUser;
 
 			switch (messageId)
 			{
@@ -276,6 +279,14 @@ int Server::Receive(ClientInfo& client, const int bufLen, char* buf) {
 						}
 					}
 				}
+				break;
+			case MessageType::Register:
+				bool result;
+				serializedUser = client.buffer.ReadString(6);
+				result = deserializeUser.ParseFromString(serializedUser);
+				std::cout << "email: " << deserializeUser.email() << " password: " << deserializeUser.plaintextpassword() << " id: " << deserializeUser.requestid() << std::endl;
+
+				std::cout << "packagelength: " << client.packetLength << " messageId: " << messageId << " serializedMessage: " << serializedUser << std::endl;
 				break;
 			default:
 				break;
