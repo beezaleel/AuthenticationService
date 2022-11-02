@@ -16,16 +16,6 @@ struct ClientInfo {
 	bool connected;
 };
 
-struct User {
-	std::string name;
-	SOCKET socket;
-};
-
-struct Room {
-	std::string roomName;
-	std::vector<User> members;
-};
-
 struct ServerInfo
 {
 	struct addrinfo* info = nullptr;
@@ -34,30 +24,18 @@ struct ServerInfo
 	fd_set activeSockets;
 	fd_set socketsReadyForReading;
 	std::vector<ClientInfo> clients;
-	std::vector<Room> rooms;
-};
-
-struct AuthClientInfo
-{
-	struct addrinfo* info = nullptr;
-	struct addrinfo* ptr = nullptr;
-	struct addrinfo hints;
-	SOCKET connectSocket = INVALID_SOCKET;
 };
 
 enum MessageType {
-	Join = 1,
-	Leave = 2,
-	Send = 3,
 	Register = 4,
 	Login = 5
 };
 
-class Server
+class AuthServer
 {
 public:
-	Server();
-	~Server();
+	AuthServer();
+	~AuthServer();
 	int Bind();
 	void Initialize();
 	int Listen();
@@ -65,19 +43,14 @@ public:
 	int Receive(ClientInfo& client, const int bufLen, char* buf);
 	int Send(ClientInfo& client, char buf[], int receiveResult);
 	void ShutDown();
-	int ConnectToAuthServer(std::string port);
 
 private:
 	ServerInfo m_serverInfo;
-	AuthClientInfo m_authClientInfo;
 	WSADATA m_wsaData;
-	WSADATA m_wsaDataAuth;
 	void AddConnectedSockets();
 	void Accept();
 	void GetServerAddrInfo();
-	void GetAuthServerAddrInfo(std::string port);
 	void CreateSocket();
-	void CreateAuthServerSocket();
-	int ManageAuthServerSocket();
-	void Startup(WSADATA &wsaData);
+	void Startup();
+
 };

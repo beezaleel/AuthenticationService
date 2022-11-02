@@ -80,7 +80,7 @@ void Server::Initialize() {
 	printf("Initializing server components! \n");
 
 	// Create WSAStartup
-	Startup();
+	Startup(m_wsaData);
 
 	// Create getaddrinfo
 	GetServerAddrInfo();
@@ -189,13 +189,15 @@ int Server::Receive(ClientInfo& client, const int bufLen, char* buf) {
 	else if (recvResult > 0) {
 		if (client.buffer.Data.size() >= 4) {
 			client.packetLength = client.buffer.ReadUInt32(0);
-			short messageId = client.buffer.ReadShort(4);
+			unsigned int messageId = client.buffer.ReadShort(4);
 			unsigned int roomNameSize = client.buffer.ReadUInt32(6);
 			char* roomname = client.buffer.ReadString(10);
 			Room room;
 			room.roomName = roomname;
 			account::CreateAccountWeb deserializeUser;
-			std::string serializedUser;
+			unsigned int messageLength = client.buffer.ReadUInt32(8);
+			std::cout << "###### MessageLength: " << messageLength << std::endl;
+			std::string serializedUser(client.buffer.Data.begin() + 12, client.buffer.Data.begin() + messageLength + 12);
 
 			switch (messageId)
 			{
@@ -282,11 +284,11 @@ int Server::Receive(ClientInfo& client, const int bufLen, char* buf) {
 				break;
 			case MessageType::Register:
 				bool result;
-				serializedUser = client.buffer.ReadString(6);
 				result = deserializeUser.ParseFromString(serializedUser);
+				if (!result) {
+					std::cout << "Failed to parse user" << std::endl;
+				}
 				std::cout << "email: " << deserializeUser.email() << " password: " << deserializeUser.plaintextpassword() << " id: " << deserializeUser.requestid() << std::endl;
-
-				std::cout << "packagelength: " << client.packetLength << " messageId: " << messageId << " serializedMessage: " << serializedUser << std::endl;
 				break;
 			default:
 				break;
@@ -339,6 +341,37 @@ void Server::ShutDown() {
 	WSACleanup();
 }
 
+int Server::ConnectToAuthServer(std::string port)
+{
+	printf("Starting connection to Auth server on port %s\n", port.c_str());
+
+	Startup(m_wsaDataAuth);
+	GetAuthServerAddrInfo(port);
+	CreateAuthServerSocket();
+
+	int state = -1;
+	printf("Connecting to the Auth server . . . \n");
+	state =
+		connect(
+			m_authClientInfo.connectSocket,
+			m_authClientInfo.info->ai_addr,
+			(int)m_authClientInfo.info->ai_addrlen
+		);
+	if (state == SOCKET_ERROR) {
+		printf("Failed to connect to server. Error - %d\n", WSAGetLastError());
+		closesocket(m_authClientInfo.connectSocket);
+		freeaddrinfo(m_authClientInfo.info);
+		WSACleanup();
+		return 1;
+	}
+	else {
+		printf("Connected to Auth server Successful!\n");
+	}
+
+	ManageAuthServerSocket();
+	return 0;
+}
+
 /// <summary>
 /// Create socket
 /// </summary>
@@ -358,6 +391,44 @@ void Server::CreateSocket() {
 	else {
 		printf("Socket was created successful!\n");
 	}
+}
+
+void Server::CreateAuthServerSocket()
+{
+	m_authClientInfo.connectSocket =
+		socket(
+			m_authClientInfo.info->ai_family,
+			m_authClientInfo.info->ai_socktype,
+			m_authClientInfo.info->ai_protocol
+		);
+	if (m_authClientInfo.connectSocket == INVALID_SOCKET) {
+		printf("Failed to Create Socket. Error - %d\n", WSAGetLastError());
+		freeaddrinfo(m_authClientInfo.info);
+		WSACleanup();
+		exit(1);
+	}
+	else {
+		printf("Authentication socket was created successful!\n");
+	}
+}
+
+int Server::ManageAuthServerSocket()
+{
+	DWORD NonBlock = 1;
+	int state = -1;
+	state = ioctlsocket(m_authClientInfo.connectSocket, FIONBIO, &NonBlock);
+	if (state == SOCKET_ERROR) {
+		printf("Authentication Socket manager (ioctlsocket) failed. Error - %d\n", WSAGetLastError());
+		closesocket(m_authClientInfo.connectSocket);
+		freeaddrinfo(m_authClientInfo.info);
+		WSACleanup();
+		return 1;
+	}
+	else {
+		printf("Created Authentication ioctlsocket!\n");
+	}
+
+	return state;
 }
 
 /// <summary>
@@ -384,14 +455,34 @@ void Server::GetServerAddrInfo() {
 	}
 }
 
+void Server::GetAuthServerAddrInfo(std::string port)
+{
+	int state = -1;
+
+	ZeroMemory(&m_authClientInfo.hints, sizeof(m_authClientInfo.hints));
+	m_authClientInfo.hints.ai_family = AF_INET;
+	m_authClientInfo.hints.ai_socktype = SOCK_STREAM;
+	m_authClientInfo.hints.ai_protocol = IPPROTO_TCP;
+
+	state = getaddrinfo("127.0.0.1", port.c_str(), &m_authClientInfo.hints, &m_authClientInfo.info);
+	if (state != 0) {
+		printf("Failed to Create getaddrinfo. Error - %d\n", state);
+		WSACleanup();
+		exit(1);
+	}
+	else {
+		printf("getaddrinfo was successful!\n");
+	}
+}
+
 /// <summary>
 /// Startup WSAStartup
 /// </summary>
-void Server::Startup() {
+void Server::Startup(WSADATA& wsaData) {
 	int state = -1;
 	WORD wVersionRequested = MAKEWORD(2, 2);
 
-	state = WSAStartup(wVersionRequested, &m_wsaData);
+	state = WSAStartup(wVersionRequested, &wsaData);
 	if (state != 0) {
 		printf("Failed to startup WSAStartup. Error - %d\n", state);
 		exit(1);

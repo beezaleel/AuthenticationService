@@ -187,14 +187,14 @@ void RegisterOrLogin(int type, std::string email, std::string password) {
 	auth.messageId = messageId;
 	auth.userData = serializedUser;
 
-	auth.packetLength = sizeof(Header) + sizeof(auth.userData.size()); //+ auth.userData.size();
+	auth.packetLength = sizeof(Header) + sizeof(auth.userData.size()) + auth.userData.size();
 	std::cout << "sizeof(Header): " << sizeof(Header) << " sizeof(auth.userData.size()): " << sizeof(auth.userData.size()) << " auth.userData.size(): " << auth.userData.size() <<  std::endl;
 
 
 	buf = Buffer();
 	buf.WriteUInt32(auth.packetLength);
 	buf.WriteUInt32(auth.messageId);
-	//buf.WriteUInt32(auth.userData.size());
+	buf.WriteUInt32(auth.userData.size());
 	//buf.WriteString((char*)auth.userData.c_str());
 	//buf.Data.assign(auth.userData.begin(), auth.userData.end());
 	buf.Data.insert(buf.Data.end(), auth.userData.begin(), auth.userData.end());

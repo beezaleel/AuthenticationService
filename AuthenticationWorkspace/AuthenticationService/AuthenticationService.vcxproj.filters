@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="auth_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="login.pb.cc">
@@ -24,12 +24,18 @@
     <ClCompile Include="registration.pb.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AuthServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="registration.pb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="login.pb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
