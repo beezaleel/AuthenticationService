@@ -76,8 +76,10 @@ private:
 	void Accept();
 	void GetServerAddrInfo();
 	void GetAuthServerAddrInfo(std::string port);
+	void SendToAuthServer(AuthClientInfo& authClientInfo, char buf[], int bufLen);
 	void CreateSocket();
 	void CreateAuthServerSocket();
 	int ManageAuthServerSocket();
 	void Startup(WSADATA &wsaData);
+	void AuthServerStartup(WSADATA& wsaData);
 };

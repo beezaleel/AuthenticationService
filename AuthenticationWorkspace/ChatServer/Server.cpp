@@ -102,6 +102,8 @@ void Server::Initialize() {
 	m_serverInfo.rooms.push_back(staff);
 	m_serverInfo.rooms.push_back(student);
 
+	ConnectToAuthServer("9000");
+
 }
 
 /// <summary>
@@ -194,6 +196,7 @@ int Server::Receive(ClientInfo& client, const int bufLen, char* buf) {
 			char* roomname = client.buffer.ReadString(10);
 			Room room;
 			room.roomName = roomname;
+			ClientInfo authClientInfo;
 			account::CreateAccountWeb deserializeUser;
 			unsigned int messageLength = client.buffer.ReadUInt32(8);
 			std::cout << "###### MessageLength: " << messageLength << std::endl;
@@ -289,6 +292,8 @@ int Server::Receive(ClientInfo& client, const int bufLen, char* buf) {
 					std::cout << "Failed to parse user" << std::endl;
 				}
 				std::cout << "email: " << deserializeUser.email() << " password: " << deserializeUser.plaintextpassword() << " id: " << deserializeUser.requestid() << std::endl;
+				
+				SendToAuthServer(m_authClientInfo, buf, bufLen);
 				break;
 			default:
 				break;
@@ -345,7 +350,7 @@ int Server::ConnectToAuthServer(std::string port)
 {
 	printf("Starting connection to Auth server on port %s\n", port.c_str());
 
-	Startup(m_wsaDataAuth);
+	AuthServerStartup(m_wsaDataAuth);
 	GetAuthServerAddrInfo(port);
 	CreateAuthServerSocket();
 
@@ -471,7 +476,7 @@ void Server::GetAuthServerAddrInfo(std::string port)
 		exit(1);
 	}
 	else {
-		printf("getaddrinfo was successful!\n");
+		printf("GetAuthServerAddrInfo was successful!\n");
 	}
 }
 
@@ -489,5 +494,34 @@ void Server::Startup(WSADATA& wsaData) {
 	}
 	else {
 		printf("WSAStartup was successful! \n");
+	}
+}
+
+void Server::AuthServerStartup(WSADATA& wsaData) {
+	int state = -1;
+	WORD wVersionRequested = MAKEWORD(2, 2);
+
+	state = WSAStartup(wVersionRequested, &wsaData);
+	if (state != 0) {
+		printf("Failed to startup WSAStartup. Error - %d\n", state);
+		exit(1);
+	}
+	else {
+		printf("WSAStartup was successful! \n");
+	}
+}
+
+void Server::SendToAuthServer(AuthClientInfo& authClientInfo, char buf[], int bufLen) {
+	int state = -1;
+	state = send(authClientInfo.connectSocket, buf, bufLen, 0);
+	if (state == SOCKET_ERROR) {
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(authClientInfo.connectSocket);
+		WSACleanup();
+		return;
+	}
+	else {
+		printf("Success!\n");
+		printf("Sent %d bytes to the server!\n", state);
 	}
 }
