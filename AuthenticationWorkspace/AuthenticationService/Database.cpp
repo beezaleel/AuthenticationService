@@ -51,7 +51,11 @@ int Database::CreateUser(std::string email, std::string password)
 {
 	// Check if user exist
 	if (UserExist(email))
-		return -1;
+		return -3;
+
+	// Check if password is valid
+	if (password == "")
+		return -2;
 
 	// create salt for the password
 	std::string salt = GenerateSalt();
@@ -59,14 +63,6 @@ int Database::CreateUser(std::string email, std::string password)
 	// Password and Salt
 	std::string saltPassword = salt + password;
 	std::string hash = sha256(saltPassword);
-
-	//time_t rawtime;
-	//struct tm ltm;
-	//time(&rawtime);
-	//localtime_s(&ltm, &rawtime);
-	//std::ostringstream ss;
-	//ss << std::put_time(&ltm, "%Y-%m-%d %H:%M:%S");
-
 
 	try {
 		mPStatement = mPConnection->createStatement();
@@ -77,7 +73,7 @@ int Database::CreateUser(std::string email, std::string password)
 		mPInsertStatement->setString(3, hash.c_str());
 
 		mPInsertStatement->execute();
-		return 1;
+		return 0;
 	}
 	catch (sql::SQLException e) {
 		printf("Failed to add a user to database: %s\n", e.what());
@@ -86,21 +82,25 @@ int Database::CreateUser(std::string email, std::string password)
 	printf("Successfully added user to Database!\n");
 }
 
-int Database::Login(std::string email, std::string password)
+int Database::Login(std::string email, std::string password, User& refUser)
 {
+	int result = 0;
 	// Check if user exist
-	if (!UserExist(email))
-		return -1;
+	result = UserExist(email);
+	if (result != 1)
+		return result;
+	
 	std::string saltProvidedPassword = mUser.salt + password;
 	std::string hashProvidedPassword = sha256(saltProvidedPassword);
 	if (mUser.hashPassword != hashProvidedPassword)
-		return -2;
+		return -3;
 
-	printf("hashProvidedPassword %s\n", hashProvidedPassword.c_str());
-	return 0;
+	UpdateLogin(mUser.userId);
+	refUser = mUser;
+	return 1;
 }
 
-bool Database::UserExist(std::string email)
+int Database::UserExist(std::string email)
 {
 	try {
 		mPStatement = mPConnection->createStatement();
@@ -113,15 +113,34 @@ bool Database::UserExist(std::string email)
 			mUser.email = mPResultSet->getString("email");
 			mUser.hashPassword = mPResultSet->getString("hashed_password");
 			mUser.salt = mPResultSet->getString("salt");
+			mUser.userId = mPResultSet->getInt64("id");
 		}
 	}
 	catch (sql::SQLException e) {
 		printf("Failed to query our database: %s\n", e.what());
-		return false;
+		return -5;
 	}
 	printf("Successfully retrieved %d rows from the database!\n", (int)mPResultSet->rowsCount());
 
 	return (int)mPResultSet->rowsCount();
+}
+
+int Database::UpdateLogin(int userId)
+{
+	try {
+		mPStatement = mPConnection->createStatement();
+		mPInsertStatement = mPConnection->prepareStatement(
+			"INSERT INTO user (last_login, created_date, userid) VALUES (now(), now(), ?);");
+		mPInsertStatement->setInt64(1, userId);
+
+		mPInsertStatement->execute();
+		return 0;
+	}
+	catch (sql::SQLException e) {
+		printf("Failed to add a user to database: %s\n", e.what());
+		return -1;
+	}
+	printf("Successfully updated user table!\n");
 }
 
 void Database::Disconnect()

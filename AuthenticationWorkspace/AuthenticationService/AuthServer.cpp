@@ -1,5 +1,7 @@
 #include "AuthServer.h"
 #include "registration.pb.h"
+#include "login.pb.h"
+#include <Common.h>
 
 #define DEFAULT_PORT "9000"
 
@@ -52,6 +54,10 @@ void AuthServer::Initialize()
 
 	// Create Socket
 	CreateSocket();
+
+	// Database initialization
+	m_database = Database();
+	m_database.Connect();
 }
 
 /// <summary>
@@ -140,34 +146,38 @@ int AuthServer::Receive(ClientInfo& client, const int bufLen, char* buf)
 	}
 	else if (recvResult > 0) {
 		if (client.buffer.Data.size() >= 4) {
-			client.packetLength = client.buffer.ReadUInt32(0);
-			short messageId = client.buffer.ReadShort(4);
-			unsigned int roomNameSize = client.buffer.ReadUInt32(6);
-			char* roomname = client.buffer.ReadString(10);
+			unsigned int messageId = client.buffer.ReadShort(4);
 			account::CreateAccountWeb deserializeUser;
-			std::string serializedUser;
+			unsigned int messageLength = client.buffer.ReadUInt32(8);
+			User refUser;
+
+
+
+			std::string serializedUser(client.buffer.Data.begin() + 12, client.buffer.Data.begin() + messageLength + 12);
+			bool result;
+			int loginResult;
 
 			switch (messageId)
 			{
 			case MessageType::Register:
-				bool result;
-				serializedUser = client.buffer.ReadString(6);
 				result = deserializeUser.ParseFromString(serializedUser);
-				std::cout << "email: " << deserializeUser.email() << " password: " << deserializeUser.plaintextpassword() << " id: " << deserializeUser.requestid() << std::endl;
-
-				std::cout << "packagelength: " << client.packetLength << " messageId: " << messageId << " serializedMessage: " << serializedUser << std::endl;
+				if (!result) {
+					std::cout << "Failed to parse user" << std::endl;
+				}
+				result = m_database.CreateUser(deserializeUser.email(), deserializeUser.plaintextpassword());
+				break;
+			case MessageType::Login:
+				result = deserializeUser.ParseFromString(serializedUser);
+				if (!result) {
+					std::cout << "Failed to parse user" << std::endl;
+				}
+				loginResult = m_database.Login(deserializeUser.email(), deserializeUser.plaintextpassword(), refUser);
+				LoginResponse(loginResult, refUser);
 				break;
 			default:
 				break;
 			}
-
-
-			std::cout << "packagelength: " << client.packetLength << " messageId:" << messageId << " roomNameSize:" << roomNameSize << " roomname:" << roomname << std::endl;
-
 		}
-
-		printf("Bytes received: %d\n", recvResult);
-		printf("Message From the client:\n%s\n", buf);
 	}
 	else {
 		printf("Receive failed. Error - %d\n", WSAGetLastError());
@@ -182,21 +192,18 @@ int AuthServer::Receive(ClientInfo& client, const int bufLen, char* buf)
 /// <param name="buf">The buffer</param>
 /// <param name="receiveResult">Buffer length</param>
 /// <returns></returns>
-int AuthServer::Send(ClientInfo& client, char buf[], int receiveResult)
+int AuthServer::Send(ClientInfo& client, char buf[], int bufLen)
 {
-	printf("Sending message : %s\n", buf);
-	int sendResult = send(client.socket, buf, receiveResult, 0);
-	if (sendResult == SOCKET_ERROR) {
-		printf("Send failed. Error - %d\n", WSAGetLastError());
-		client.connected = false;
+	int state = -1;
+	state = send(client.socket, buf, bufLen, 0);
+	if (state == SOCKET_ERROR) {
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(client.socket);
+		WSACleanup();
+		return 1;
 	}
-	else if (sendResult > 0) {
-		printf("Bytes sent: %d\n", sendResult);
-	}
-	else {
-		printf("No response from client\n");
-	}
-	return sendResult;
+
+	return state;
 }
 
 /// <summary>
@@ -205,6 +212,7 @@ int AuthServer::Send(ClientInfo& client, char buf[], int receiveResult)
 void AuthServer::ShutDown()
 {
 	printf("Shutting down server . . .\n");
+	m_database.Disconnect();
 	freeaddrinfo(m_serverInfo.info);
 	closesocket(m_serverInfo.listenSocket);
 	WSACleanup();
@@ -304,5 +312,65 @@ void AuthServer::Startup()
 	}
 	else {
 		printf("WSAStartup was successful! \n");
+	}
+}
+
+/// <summary>
+/// The response sent back to Chat server
+/// </summary>
+/// <param name="result">The database result</param>
+void AuthServer::LoginResponse(int result, User user)
+{
+	time_t rawtime;
+	struct tm ltm;
+	time(&rawtime);
+	localtime_s(&ltm, &rawtime);
+	std::ostringstream datetimeString;
+	datetimeString << std::put_time(&ltm, "%Y-%m-%d %H:%M:%S");
+
+	Authentication auth;
+	auth.messageId = MessageType::Login;
+
+	Buffer buf = Buffer();
+
+	if (result == 1) {
+		account::AuthenticateWebSuccess response;
+
+		response.set_requestid(0);
+		response.set_userid(user.userId);
+		response.set_creationdate(datetimeString.str());
+
+		std::string serializedResponse;
+		response.SerializeToString(&serializedResponse);
+		auth.userData = serializedResponse;
+		auth.packetLength = sizeof(Header) + sizeof(auth.userData.size()) + auth.userData.size();
+
+		buf.WriteUInt32(auth.packetLength);
+		buf.WriteUInt32(auth.messageId);
+		buf.WriteUInt32(auth.userData.size());
+		buf.Data.insert(buf.Data.end(), auth.userData.begin(), auth.userData.end());
+
+		Send(m_serverInfo.clients[0], (char*)(buf.Data.data()), auth.packetLength);
+	}
+	else {
+		account::AuthenticateWebFailure response;
+
+		response.set_requestid(0);
+		if (result == -3)
+			response.set_failurereason(account::AuthenticateWebFailure_reason_INVALID_CREDENTIALS);
+		else
+			response.set_failurereason(account::AuthenticateWebFailure_reason_INTERNAL_SERVER_ERROR);
+
+		std::string serializedResponse;
+		response.SerializeToString(&serializedResponse);
+		auth.userData = serializedResponse;
+		auth.packetLength = sizeof(Header) + sizeof(auth.userData.size()) + auth.userData.size();
+
+		buf.WriteUInt32(auth.packetLength);
+		buf.WriteUInt32(auth.messageId);
+		buf.WriteUInt32(auth.userData.size());
+		buf.Data.insert(buf.Data.end(), auth.userData.begin(), auth.userData.end());
+
+		Send(m_serverInfo.clients[0], (char*)(buf.Data.data()), auth.packetLength);
 	}
 }

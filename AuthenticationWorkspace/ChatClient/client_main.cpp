@@ -132,7 +132,9 @@ void SetConsoleColor(int color) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
-
+/// <summary>
+/// Allows user to either login or register
+/// </summary>
 void AuthenticateUser() {
 	int option;
 	std::string email, password;
@@ -146,11 +148,11 @@ void AuthenticateUser() {
 	printf("Email: --> ");
 	std::cin >> email;
 	printf("Password: --> ");
+	std::cin >> password;
 
 	switch (option)
 	{
 	case 1:
-		std::cin >> password;
 		RegisterOrLogin(option, email, password);
 		break;
 	case 2:
@@ -186,36 +188,18 @@ void RegisterOrLogin(int type, std::string email, std::string password) {
 	Authentication auth;
 	auth.messageId = messageId;
 	auth.userData = serializedUser;
-
 	auth.packetLength = sizeof(Header) + sizeof(auth.userData.size()) + auth.userData.size();
-	std::cout << "sizeof(Header): " << sizeof(Header) << " sizeof(auth.userData.size()): " << sizeof(auth.userData.size()) << " auth.userData.size(): " << auth.userData.size() <<  std::endl;
-
+	
 
 	buf = Buffer();
 	buf.WriteUInt32(auth.packetLength);
 	buf.WriteUInt32(auth.messageId);
 	buf.WriteUInt32(auth.userData.size());
-	//buf.WriteString((char*)auth.userData.c_str());
-	//buf.Data.assign(auth.userData.begin(), auth.userData.end());
 	buf.Data.insert(buf.Data.end(), auth.userData.begin(), auth.userData.end());
 
 	client.Send((const char*)(buf.Data.data()), auth.packetLength);
-
-	int oLength = buf.ReadUInt32(0);
-	int pId = buf.ReadUInt32(4);
-	//int usedsize = buf.ReadUInt32(8);
-	std::string mesg(buf.Data.begin() + 8, buf.Data.end());
-	std::cout << "oLength: " << oLength << " pId: " << pId << " mesg: " << mesg << " serializedUser: " << serializedUser << std::endl;
-
-	account::CreateAccountWeb deserializeUser;
-	bool success = deserializeUser.ParseFromString(mesg);
-	if (!success) {
-		std::cout << "Failed to parse user" << std::endl;
-	}
-	std::cout << deserializeUser.requestid() << std::endl;
-	std::cout << deserializeUser.email() << std::endl;
-	std::cout << deserializeUser.plaintextpassword() << std::endl;
 }
+
 
 int main(int argc, char* argv) {
 	printf("##################################################################\n");
@@ -240,10 +224,13 @@ int main(int argc, char* argv) {
 	if (client.ManageSocket() != success)
 		return 1;
 
-	// Authenticate users before they login
-	AuthenticateUser();
+	// Authenticate users before they login. Continues loop to keep testing user login and registration
+	while (true) {
+		AuthenticateUser();
+	}
 
-	SetConsoleColor(1);
+	// PROJECT 1. I commented the chat part out
+	/*SetConsoleColor(1);
 	printf("\n");
 	while (name.length() == 0) {
 		printf("Please enter username: ");
@@ -252,7 +239,7 @@ int main(int argc, char* argv) {
 	while (true) {
 		ProcessKeyboardInput();
 		client.Receive(recvBuf, recvBufLen);
-	}
+	}*/
 
 	client.ShutDown();
 	return 0;

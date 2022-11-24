@@ -129,10 +129,6 @@ int Client::Send(const char buf[], int bufLen) {
 		WSACleanup();
 		return 1;
 	}
-	else {
-		//printf("Success!\n");
-		//printf("Sent %d bytes to the server!\n", state);
-	}
 
 	return state;
 }

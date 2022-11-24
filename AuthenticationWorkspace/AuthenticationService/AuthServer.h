@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include "Database.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -47,10 +48,13 @@ public:
 private:
 	ServerInfo m_serverInfo;
 	WSADATA m_wsaData;
+	Database m_database;
 	void AddConnectedSockets();
 	void Accept();
 	void GetServerAddrInfo();
 	void CreateSocket();
 	void Startup();
+	void LoginResponse(int result, User user);
+	void RegistrationResponse(int result);
 
 };

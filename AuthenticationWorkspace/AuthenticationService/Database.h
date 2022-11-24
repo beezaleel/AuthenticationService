@@ -18,6 +18,7 @@ struct User {
 	std::string password;
 	std::string salt;
 	std::string hashPassword;
+	int userId;
 };
 
 struct DatabaseCredentials {
@@ -33,7 +34,7 @@ public:
 	~Database();
 	bool Connect();
 	int CreateUser(std::string email, std::string password);
-	int Login(std::string email, std::string password);
+	int Login(std::string email, std::string password, User& refUser);
 	void Disconnect();
 
 private:
@@ -43,6 +44,7 @@ private:
 	sql::Statement* mPStatement;
 	sql::PreparedStatement* mPInsertStatement;
 	User mUser;
-	bool UserExist(std::string email);
+	int UserExist(std::string email);
+	int UpdateLogin(int userId);
 	std::string GenerateSalt();
 };

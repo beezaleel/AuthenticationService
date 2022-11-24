@@ -285,6 +285,7 @@ int Server::Receive(ClientInfo& client, const int bufLen, char* buf) {
 					}
 				}
 				break;
+			case MessageType::Login:
 			case MessageType::Register:
 				bool result;
 				result = deserializeUser.ParseFromString(serializedUser);
@@ -293,7 +294,7 @@ int Server::Receive(ClientInfo& client, const int bufLen, char* buf) {
 				}
 				std::cout << "email: " << deserializeUser.email() << " password: " << deserializeUser.plaintextpassword() << " id: " << deserializeUser.requestid() << std::endl;
 				
-				SendToAuthServer(m_authClientInfo, buf, bufLen);
+				SendToAuthServer(m_authClientInfo, client.buffer, client.packetLength);
 				break;
 			default:
 				break;
@@ -511,9 +512,9 @@ void Server::AuthServerStartup(WSADATA& wsaData) {
 	}
 }
 
-void Server::SendToAuthServer(AuthClientInfo& authClientInfo, char buf[], int bufLen) {
+void Server::SendToAuthServer(AuthClientInfo& authClientInfo, Buffer buffer, int bufLen) {
 	int state = -1;
-	state = send(authClientInfo.connectSocket, buf, bufLen, 0);
+	state = send(authClientInfo.connectSocket, (const char*)(buffer.Data.data()), bufLen, 0);
 	if (state == SOCKET_ERROR) {
 		printf("send failed with error: %d\n", WSAGetLastError());
 		closesocket(authClientInfo.connectSocket);
